@@ -5,12 +5,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.example.qsl.domain.SiteUser;
 import java.util.Arrays;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
+@Transactional          // 각 테스트케이스에 모두 붙게 된다. 자동 롤백
+@ActiveProfiles("test")
 class UserRepositoryTest {
 
   @Autowired
@@ -19,19 +23,19 @@ class UserRepositoryTest {
   @Test
   @DisplayName("회원 생성")
   void t1() {
-    SiteUser u1 = SiteUser.builder()
-        .usename("user1")
+    SiteUser u3 = SiteUser.builder()
+        .usename("user3")
         .password("1234")
-        .email("user1@test.com")
+        .email("user3@test.com")
         .build();
 
-    SiteUser u2 = SiteUser.builder()
-        .usename("user2")
+    SiteUser u4 = SiteUser.builder()
+        .usename("user4")
         .password("1234")
-        .email("user2@test.com")
+        .email("user4@test.com")
         .build();
 
-    userRepository.saveAll(Arrays.asList(u1, u2));
+    userRepository.saveAll(Arrays.asList(u3, u4));
   }
 
   @Test
