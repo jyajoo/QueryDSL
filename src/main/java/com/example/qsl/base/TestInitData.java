@@ -18,12 +18,12 @@ public class TestInitData {
   CommandLineRunner init(UserRepository userRepository) {
     return args -> {
       SiteUser u1 = SiteUser.builder()
-          .usename("user1")
+          .username("user1")
           .password("1234")
           .email("user1@test.com")
           .build();
       SiteUser u2 = SiteUser.builder()
-          .usename("user2")
+          .username("user2")
           .password("1234")
           .email("user2@test.com")
           .build();
