@@ -9,7 +9,7 @@ public interface UserRepositoryCustom {
 
   SiteUser getQslUser(Long id);
 
-  long getQslCount();
+  Long getQslCount();
 
   SiteUser getQslOrderByIdAscOne();
 
@@ -18,4 +18,6 @@ public interface UserRepositoryCustom {
   List<SiteUser> searchQsl(String kw);
 
   Page<SiteUser> searchQsl(String kw, Pageable pageable);
+
+  List<SiteUser> getQslUsersByInterestKeyword(String keywordContent);
 }

@@ -1,6 +1,7 @@
 package com.example.qsl.repository;
 
 
+import static com.example.qsl.domain.QInterestKeyword.interestKeyword;
 import static com.example.qsl.domain.QSiteUser.siteUser;
 
 import com.example.qsl.domain.SiteUser;
@@ -12,7 +13,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -38,7 +38,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
   }
 
   @Override
-  public long getQslCount() {
+  public Long getQslCount() {
     return jpaQueryFactory
         .select(siteUser.count())
         .from(siteUser)
@@ -120,5 +120,32 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
         );
 
     return PageableExecutionUtils.getPage(users, pageable, usersCountQuery::fetchOne);
+  }
+
+  @Override
+  public List<SiteUser> getQslUsersByInterestKeyword(String keywordContent) {
+    /*
+    return jpaQueryFactory
+        .select(siteUser)
+        .from(siteUser)
+        .where(siteUser.interestKeywords.contains(new InterestKeyword(keywordContent)))
+        .fetch();
+     */
+
+    /*
+    SELECT SU.*
+    FROM site_user AS SU
+    INNER JOIN stie_user_interest_keywords AS SUIK
+    ON SU.id = SUIK.site_user_id
+    INNERJOIN interest_keyword AS IK
+    ON IK.content = SUIK.interest_keywords_content
+    WHERE IK.content = "축구";
+     */
+
+    return jpaQueryFactory
+        .selectFrom(siteUser)
+        .innerJoin(siteUser.interestKeywords, interestKeyword)
+        .where(interestKeyword.content.eq(keywordContent))
+        .fetch();
   }
 }
