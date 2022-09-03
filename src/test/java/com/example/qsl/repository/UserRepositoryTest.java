@@ -247,7 +247,6 @@ class UserRepositoryTest {
 
   @Test
   @DisplayName("특정회원의 follower들과 following들을 모두 알 수 있어야 한다.")
-  @Rollback(false)
   void t15() {
     SiteUser u1 = userRepository.getQslUser(1L);
     SiteUser u2 = userRepository.getQslUser(2L);

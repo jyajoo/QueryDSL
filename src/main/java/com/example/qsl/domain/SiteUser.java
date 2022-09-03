@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,7 +39,7 @@ public class SiteUser {
   private String email;
 
   @Builder.Default
-  @ManyToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
   private Set<InterestKeyword> interestKeywords = new HashSet<>();
 
   @Builder.Default
@@ -50,7 +51,7 @@ public class SiteUser {
   private Set<SiteUser> following = new HashSet<>();
 
   public void addInterestKeywordContent(String keywordContent) {
-    interestKeywords.add(new InterestKeyword(keywordContent));
+    interestKeywords.add(new InterestKeyword(this, keywordContent));
   }
 
   public void follow(SiteUser following) {
