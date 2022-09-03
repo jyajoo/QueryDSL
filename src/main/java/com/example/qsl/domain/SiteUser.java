@@ -1,6 +1,7 @@
 package com.example.qsl.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -40,7 +41,23 @@ public class SiteUser {
   @ManyToMany(cascade = CascadeType.ALL)
   private Set<InterestKeyword> interestKeywords = new HashSet<>();
 
+  @Builder.Default
+  @ManyToMany(cascade = CascadeType.ALL)
+  private Set<SiteUser> followers = new HashSet<>();
+
+  @Builder.Default
+  @ManyToMany(cascade = CascadeType.ALL)
+  private Set<SiteUser> following = new HashSet<>();
+
   public void addInterestKeywordContent(String keywordContent) {
     interestKeywords.add(new InterestKeyword(keywordContent));
+  }
+
+  public void follow(SiteUser following) {
+    if(this == following) return;
+    if(following == null) return;;
+    if(this.getId().equals(following.getId())) return;
+    following.getFollowers().add(this);
+    getFollowing().add(following);
   }
 }

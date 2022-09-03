@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
@@ -128,7 +129,7 @@ class UserRepositoryTest {
   void t8() {
     long totalCount = userRepository.count();
     int pageSize = 1; // 한 페이지에 보여줄 아이템 개수
-    int totalPages = (int)Math.ceil(totalCount / (double)pageSize);
+    int totalPages = (int) Math.ceil(totalCount / (double) pageSize);
     int page = 1;
     String kw = "user";
 
@@ -158,7 +159,7 @@ class UserRepositoryTest {
   void t9() {
     long totalCount = userRepository.count();
     int pageSize = 1; // 한 페이지에 보여줄 아이템 개수
-    int totalPages = (int)Math.ceil(totalCount / (double)pageSize);
+    int totalPages = (int) Math.ceil(totalCount / (double) pageSize);
     int page = 1;
     String kw = "user";
 
@@ -224,5 +225,49 @@ class UserRepositoryTest {
     assertThat(u.getUsername()).isEqualTo("user1");
     assertThat(u.getEmail()).isEqualTo("user1@test.com");
     assertThat(u.getPassword()).isEqualTo("1234");
+  }
+
+  @Test
+  @DisplayName("u2 = 아이돌, u1 = 팬 / u1은 u2의 팔로워")
+  void t13() {
+    SiteUser u1 = userRepository.getQslUser(1L);
+    SiteUser u2 = userRepository.getQslUser(2L);
+    u2.follow(u1);
+    userRepository.save(u2);
+  }
+
+  @Test
+  @DisplayName("본인이 본인 follow 불가능")
+  @Rollback(false)
+  void t14() {
+    SiteUser u1 = userRepository.getQslUser(1L);
+    u1.follow(u1);
+    assertThat(u1.getFollowers().size()).isEqualTo(0);
+  }
+
+  @Test
+  @DisplayName("특정회원의 follower들과 following들을 모두 알 수 있어야 한다.")
+  @Rollback(false)
+  void t15() {
+    SiteUser u1 = userRepository.getQslUser(1L);
+    SiteUser u2 = userRepository.getQslUser(2L);
+
+    u1.follow(u2);
+
+    // follower
+    // u1의 구독자 : 0
+    assertThat(u1.getFollowers().size()).isEqualTo(0);
+
+    // follower
+    // u2의 구독자 : 1
+    assertThat(u2.getFollowers().size()).isEqualTo(1);
+
+    // following
+    // u1이 구독중인 회원 : 1
+    assertThat(u1.getFollowing().size()).isEqualTo(1);
+
+    // following
+    // u2가 구독중인 회원 : 0
+    assertThat(u2.getFollowing().size()).isEqualTo(0);
   }
 }
