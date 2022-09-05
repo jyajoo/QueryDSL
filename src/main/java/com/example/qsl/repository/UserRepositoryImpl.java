@@ -4,6 +4,7 @@ package com.example.qsl.repository;
 import static com.example.qsl.domain.QInterestKeyword.interestKeyword;
 import static com.example.qsl.domain.QSiteUser.siteUser;
 
+import com.example.qsl.domain.QSiteUser;
 import com.example.qsl.domain.SiteUser;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -146,6 +147,19 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
         .selectFrom(siteUser)
         .innerJoin(siteUser.interestKeywords, interestKeyword)
         .where(interestKeyword.content.eq(keywordContent))
+        .fetch();
+  }
+
+  @Override
+  public List<String> getKeywordContentsByFollowingsOf(SiteUser user) {
+
+    QSiteUser siteUser2 = new QSiteUser("siteUser2");
+
+    return jpaQueryFactory.select(interestKeyword.content).distinct()
+        .from(interestKeyword)
+        .innerJoin(interestKeyword.user, siteUser)
+        .innerJoin(siteUser.followers, siteUser2)
+        .where(siteUser2.id.eq(user.getId()))
         .fetch();
   }
 }

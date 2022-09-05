@@ -39,7 +39,7 @@ public class SiteUser {
   private String email;
 
   @Builder.Default
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
   private Set<InterestKeyword> interestKeywords = new HashSet<>();
 
   @Builder.Default
@@ -54,10 +54,14 @@ public class SiteUser {
     interestKeywords.add(new InterestKeyword(this, keywordContent));
   }
 
+  public void removeInterestKeywordContent(String keywordContent) {
+    interestKeywords.remove(new InterestKeyword(this, keywordContent));
+  }
+
   public void follow(SiteUser following) {
     if(this == following) return;
     if(following == null) return;;
-    if(this.getId().equals(following.getId())) return;
+    if(this.getId() == following.getId()) return;
     following.getFollowers().add(this);
     getFollowing().add(following);
   }
