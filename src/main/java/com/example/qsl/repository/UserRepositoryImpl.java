@@ -150,6 +150,17 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
         .fetch();
   }
 
+  /*
+  SELECT DISTINCT IK.content
+  FROM interest_keyword AS IK
+  INNER JOIN site_user AS SU1
+  ON IK.user_id = SU1.id
+  INNER JOIN site_user_followers AS SUFR
+  ON SU1.id = SUFR.site_user_id
+  INNER JOIN site_user AS SU2
+  ON SUFR.followers_id = SU2.id
+  WHERE SU2.id = 8;
+   */
   @Override
   public List<String> getKeywordContentsByFollowingsOf(SiteUser user) {
 
@@ -162,4 +173,22 @@ public class UserRepositoryImpl implements UserRepositoryCustom{
         .where(siteUser2.id.eq(user.getId()))
         .fetch();
   }
+
+
+  /*
+  jpaQueryFactory.select(interestKeyword.content).distinct()
+    .from(interestKeyword)
+    .where(interestKeyword.user.in(user.getFollowings()))
+    .fetch();
+
+  SELECT *
+  FROM site_user_followings AS SUFW
+  INNER JOIN site_user AS SU1
+  ON SUFW.followings_id = SU1.id
+  WHERE SUFW.site_user_id = 8;
+
+  SELECT DISTINCT IK.content
+  FROM interest_keyword AS IK
+  WHERE IK.user_id in (7 , 4 , 5 , 6 , 3);
+   */
 }
